@@ -31,24 +31,24 @@ date -R
 
 
 if [ "$VER" = "latest" ]; then
-  V_VER=`wget -qO- "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | grep 'tag_name' | cut -d\" -f4`
+  V_VER=`wget -qO- "https://api.github.com/repos/v2ray/v2ray-core/releases/latest" | sed -n -r -e 's/.*"tag_name".+?"([vV0-9\.]+?)".*/\1/p'`
+  [[ -z "${V_VER}" ]] && V_VER="v4.23.1"
 else
   V_VER="v$VER"
 fi
 
 mkdir /v2raybin
 cd /v2raybin
-V2RAY_URL="https://github.com/v2fly/v2ray-core/releases/download/$V_VER/v2ray-linux-64.zip"
+V2RAY_URL="https://github.com/v2ray/v2ray-core/releases/download/$V_VER/v2ray-linux-64.zip"
 echo ${V2RAY_URL}
 wget --no-check-certificate -qO 'v2ray.zip' ${V2RAY_URL}
 unzip v2ray.zip
 rm -rf v2ray.zip
 
-
-C_VER=`wget -qO- "https://api.github.com/repos/mholt/caddy/releases/latest" | grep 'tag_name' | cut -d\" -f4`
+C_VER="v1.0.3"
 mkdir /caddybin
 cd /caddybin
-CADDY_URL="https://github.com/caddyserver/caddy/releases/download/v2.1.1/caddy_2.1.1_linux_amd64.tar.gz"
+CADDY_URL="https://github.com/caddyserver/caddy/releases/download/$C_VER/caddy_${C_VER}_linux_amd64.tar.gz"
 echo ${CADDY_URL}
 wget --no-check-certificate -qO 'caddy.tar.gz' ${CADDY_URL}
 tar xvf caddy.tar.gz
@@ -108,18 +108,18 @@ http://0.0.0.0:${PORT}
 }
 EOF
 
-cat <<-EOF > /v2raybin/vmess.json 
+cat <<-EOF > /v2raybin/vmess.json
 {
     "v": "2",
     "ps": "${AppName}.herokuapp.com",
     "add": "${AppName}.herokuapp.com",
     "port": "443",
     "id": "${UUID}",
-    "aid": "${AlterID}",			
-    "net": "ws",			
-    "type": "none",			
-    "host": "",			
-    "path": "${V2_Path}",	
+    "aid": "${AlterID}",
+    "net": "ws",
+    "type": "none",
+    "host": "",
+    "path": "${V2_Path}",
     "tls": "tls"
 }
 EOF
@@ -128,8 +128,8 @@ if [ "$AppName" = "no" ]; then
   echo "不生成二维码"
 else
   mkdir /wwwroot/${V2_QR_Path}
-  vmess="vmess://$(cat /v2raybin/vmess.json | base64 -w 0)" 
-  Linkbase64=$(echo -n "${vmess}" | tr -d '\n' | base64 -w 0) 
+  vmess="vmess://$(cat /v2raybin/vmess.json | base64 -w 0)"
+  Linkbase64=$(echo -n "${vmess}" | tr -d '\n' | base64 -w 0)
   echo "${Linkbase64}" | tr -d '\n' > /wwwroot/${V2_QR_Path}/index.html
   echo -n "${vmess}" | qrencode -s 6 -o /wwwroot/${V2_QR_Path}/v2.png
 fi
