@@ -48,7 +48,7 @@ rm -rf v2ray.zip
 C_VER=`wget -qO- "https://api.github.com/repos/mholt/caddy/releases/latest" | grep 'tag_name' | cut -d\" -f4`
 mkdir /caddybin
 cd /caddybin
-CADDY_URL="https://github.com/mholt/caddy/releases/download/$C_VER/caddy_${C_VER}_linux_amd64.tar.gz"
+CADDY_URL="https://github.com/caddyserver/caddy/releases/download/v2.1.1/caddy_2.1.1_linux_amd64.tar.gz"
 echo ${CADDY_URL}
 wget --no-check-certificate -qO 'caddy.tar.gz' ${CADDY_URL}
 tar xvf caddy.tar.gz
