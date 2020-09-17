@@ -1,4 +1,4 @@
-# 一键部署 v2ray 到 heroku
+# 一键部署 v2ray 到 heroku 2020/09/16 修正V2RAY官方库
 
 点击下面按钮部署：
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
